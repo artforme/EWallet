@@ -11,6 +11,7 @@ const (
 	envProd  = "prod"
 )
 
+// SetupLogger set the type and level of logger depending on env
 func SetupLogger(env string) *slog.Logger {
 	var log *slog.Logger
 	switch env {

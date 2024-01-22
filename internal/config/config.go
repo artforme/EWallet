@@ -21,8 +21,9 @@ type HTTPServer struct {
 	Password     string        `yaml:"password" env-required:"true" env:"HTTP_SERVER_PASSWORD"`
 }
 
-// load local environment to stucter Config above and returns it
+// MustLoad loads environment to struct Config and returns it
 func MustLoad() *Config {
+	//get from environment
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		log.Fatal("CONFIG_PATH is not set")
