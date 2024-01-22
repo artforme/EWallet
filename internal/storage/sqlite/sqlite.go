@@ -34,7 +34,7 @@ func New(storagePath string) (*Storage, error) {
 	firSqlRequest, err := dataBase.Prepare(`
 	CREATE TABLE IF NOT EXISTS wallets (
 	    walletID TEXT NOT NULL UNIQUE,
-	    balance DECIMAL(10, 2))	
+	    balance DECIMAL(10, 6))	
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s: prepare statement: %w", op, err)
@@ -46,7 +46,7 @@ func New(storagePath string) (*Storage, error) {
 	transactionTime TEXT,
 	fromWallet TEXT NOT NULL, 
 	toWallet TEXT NOT NULL, 
-	amount DECIMAL(10, 2),
+	amount DECIMAL(10, 6),
 	FOREIGN KEY(fromWallet) REFERENCES wallets(walletID), 
 	FOREIGN KEY(toWallet) REFERENCES wallets(walletID))
 	`)
@@ -69,7 +69,7 @@ func New(storagePath string) (*Storage, error) {
 
 }
 
-// CreateWallet create new wallet and returns id of wallet if successfully
+// CreateWallet create new createWallet and returns id of createWallet if successfully
 func (s *Storage) CreateWallet() (string, error) {
 	const op = "storage.sqlite.CreateWallet"
 
@@ -78,7 +78,7 @@ func (s *Storage) CreateWallet() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("%s: prepare statement:  %w", op, err)
 	}
-	//we use func NewRandomString from package randomStr to create unique id for wallet
+	//we use func NewRandomString from package randomStr to create unique id for createWallet
 	walletID := randomStr.NewRandomString(WalletIDlenght)
 	_, err = SqlRequest.Exec(walletID)
 	if err != nil {
@@ -107,7 +107,7 @@ func (s *Storage) Transfer(fromWallet, toWallet, amount string) error {
 	err = SqlRequest.QueryRow(fromWallet).Scan(&resBalance)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return errors.New("wallet not found")
+			return errors.New("createWallet not found")
 		}
 		return fmt.Errorf("%s: execute statement: %w", op, err)
 	}
@@ -124,7 +124,7 @@ func (s *Storage) Transfer(fromWallet, toWallet, amount string) error {
 
 	RedSqlRequest, err := s.dataBase.Prepare(`
 		UPDATE wallets
-		SET balance = ROUND(balance - ?, 2)
+		SET balance = ROUND(balance - ?, 6)
 		WHERE walletID = ?;	
 	`)
 	if err != nil {
@@ -133,7 +133,7 @@ func (s *Storage) Transfer(fromWallet, toWallet, amount string) error {
 
 	AddSqlRequest, err := s.dataBase.Prepare(`
 		UPDATE wallets
-		SET balance = ROUND(balance + ?, 2)
+		SET balance = ROUND(balance + ?, 6)
 		WHERE walletID = ?;
 	`)
 	if err != nil {
@@ -154,7 +154,7 @@ func (s *Storage) Transfer(fromWallet, toWallet, amount string) error {
 		}
 
 		if errors.Is(err, sql.ErrNoRows) {
-			return errors.New("wallet not found")
+			return errors.New("createWallet not found")
 		}
 		return fmt.Errorf("%s: execute statement: %w", op, err1)
 	}
@@ -174,7 +174,7 @@ func (s *Storage) Transfer(fromWallet, toWallet, amount string) error {
 	return nil
 }
 
-// ShowHistory shows the history of all transactions with specific wallet
+// ShowHistory shows the history of all transactions with specific createWallet
 func (s *Storage) ShowHistory(walletID string) ([]response.RespTransaction, error) {
 	const op = "storage.sqlite.ShowHistory"
 
@@ -205,7 +205,7 @@ func (s *Storage) ShowHistory(walletID string) ([]response.RespTransaction, erro
 	return historyResponse, nil
 }
 
-// ShowWallet shows specific wallet
+// ShowWallet shows specific createWallet
 func (s *Storage) ShowWallet(walletID string) (response.Wallet, error) {
 	const op = "storage.sqlite.ShowWallet"
 
