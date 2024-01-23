@@ -25,7 +25,7 @@ type WalletShower interface {
 func New(log *slog.Logger, walletShower WalletShower) http.HandlerFunc {
 	//our handler
 	return func(w http.ResponseWriter, r *http.Request) {
-		const op = "handlers.showHistory.showHistory.New"
+		const op = "handlers.showWallet.showWallet.New"
 
 		log = log.With(
 			slog.String("op", op),
