@@ -25,24 +25,23 @@ http://0.0.0.0:8082/api/v1/wallet
 
 To transfer funds from one wallet to another, send a POST request with the payload containing the wallet ID and the amount to transfer:
 
-http://0.0.0.0:8082/api/v1/wallet/puUv3LDLoZXdxqsx/send
+http://0.0.0.0:8082/api/v1/wallet/{yourWalletID}/send
 
 Payload:
 {
-    "walletId": "KdigKCHR7rT2IVHI",
-    "amount": "9.234"
+    "walletId": "{yourWalletID}",
+    "amount": "9.23"
 }
 
 ### Show Transaction History
 
 To view the transaction history of a wallet, send a GET request to:
 
-http://0.0.0.0:8082/api/v1/wallet/puUv3LDLoZXdxqsx/history
+http://0.0.0.0:8082/api/v1/wallet/{yourWalletID}/history
 
 ### Show Wallet Details
 
 To retrieve the details of a specific wallet, send a GET request to:
-
-http://0.0.0.0:8082/api/v1/wallet/puUv3LDLoZXdxqsx
-
-## Additional Notes
+```bash
+http://0.0.0.0:8082/api/v1/wallet/{yourWalletID}
+```
