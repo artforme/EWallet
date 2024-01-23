@@ -17,7 +17,7 @@ type WalletCreator interface {
 	CreateWallet() (string, error)
 }
 
-// New creates handler that creates new wallet and response
+// New creates a handler that creates new wallet and response
 func New(log *slog.Logger, walletCreator WalletCreator) http.HandlerFunc {
 	//our handler
 	return func(w http.ResponseWriter, r *http.Request) {

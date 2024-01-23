@@ -20,6 +20,7 @@ type HistoryShower interface {
 	CheckIfExists(walletID string) (bool, error)
 }
 
+// New creates a handler that shows transactions history of specific wallet
 func New(log *slog.Logger, historyShower HistoryShower) http.HandlerFunc {
 	//our handler
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +30,7 @@ func New(log *slog.Logger, historyShower HistoryShower) http.HandlerFunc {
 			slog.String("op", op),
 			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
-
+		// get walletID form url
 		walletID := chi.URLParam(r, "walletId")
 		if walletID == "" {
 			log.Info("walletID is empty")
@@ -38,7 +39,7 @@ func New(log *slog.Logger, historyShower HistoryShower) http.HandlerFunc {
 
 			return
 		}
-
+		// check if exists in database
 		if exists, err := historyShower.CheckIfExists(walletID); !exists || err != nil {
 			log.Error("failed to find outgoing walletID", slog.Attr{
 				Key:   "error",
