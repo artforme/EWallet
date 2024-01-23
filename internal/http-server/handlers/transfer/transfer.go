@@ -53,7 +53,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 				render.JSON(w, r, response.ResErrorNotFound("failed to find outgoing walletID"))
 				return
 			}
-			render.JSON(w, r, response.ResError(err.Error()))
+			render.JSON(w, r, response.ResError("failed request"))
 			return
 		}
 
@@ -79,7 +79,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 				render.JSON(w, r, response.ResError("failed to find target walletID"))
 				return
 			}
-			render.JSON(w, r, response.ResError(err.Error()))
+			render.JSON(w, r, response.ResError("failed request"))
 			return
 		}
 
@@ -103,7 +103,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 				Key:   "error",
 				Value: slog.StringValue(err.Error()),
 			})
-			render.JSON(w, r, response.ResError(err.Error()))
+			render.JSON(w, r, response.ResError("failed request"))
 			return
 		}
 		log.Info("successful transfer")
