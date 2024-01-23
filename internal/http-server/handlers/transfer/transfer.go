@@ -26,6 +26,7 @@ type WalletTransfer interface {
 	CheckIfExists(walletID string) (bool, error)
 }
 
+// New creates a handler that send amount from one wallet to another
 func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 	//our handler
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +36,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 			slog.String("op", op),
 			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
-
+		// get walletID form url
 		FromWalletID := chi.URLParam(r, "walletId")
 		if FromWalletID == "" {
 			log.Info("walletID is empty")
@@ -44,6 +45,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 
 			return
 		}
+		// check if exists in database
 		if exists, err := walletTransfer.CheckIfExists(FromWalletID); !exists || err != nil {
 			log.Error("failed to find outgoing walletID", slog.Attr{
 				Key:   "error",
@@ -58,7 +60,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 		}
 
 		var req Request
-
+		// decode body request
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil {
 			log.Error("failed to decode request body", slog.Attr{
@@ -70,6 +72,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 
 			return
 		}
+		// check if exists in database
 		if exists, err := walletTransfer.CheckIfExists(req.WalletID); !exists || err != nil {
 			log.Error("failed to find outgoing walletID", slog.Attr{
 				Key:   "error",
@@ -84,7 +87,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 		}
 
 		log.Info("request body decoded", slog.Any("request", req))
-
+		// check fields of request body
 		if err = validator.New().Struct(req); err != nil {
 			validateErr := err.(validator.ValidationErrors)
 			log.Error("invalid request", slog.Attr{
@@ -96,7 +99,7 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 
 			return
 		}
-
+		// do transfer
 		err = walletTransfer.Transfer(FromWalletID, req.WalletID, req.Amount)
 		if err != nil {
 			log.Error("invalid request", slog.Attr{
