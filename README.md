@@ -7,9 +7,9 @@ Welcome to the testing guide for the eWallet application. This README provides i
 
 To get started with testing the eWallet app, you'll need to download the Docker image. Execute the following command in your terminal to pull the latest version of the eWallet Docker image:
 
-Bash
-
+```cmd
 docker pull artforme/ewallet:latest
+```
 
 ## Testing Commands
 
@@ -18,9 +18,9 @@ Below you will find a set of HTTP endpoints that you can use to test various fun
 ### Create Wallet
 
 To create a new wallet, send a POST request to the following endpoint:
-
+```cmd
 http://0.0.0.0:8082/api/v1/wallet
-
+```
 ### Transfer Funds
 
 To transfer funds from one wallet to another, send a POST request with the payload containing the wallet ID and the amount to transfer:
@@ -36,12 +36,12 @@ http://0.0.0.0:8082/api/v1/wallet/{yourWalletID}/send
 ### Show Transaction History
 
 To view the transaction history of a wallet, send a GET request to:
-
+```cmd
 http://0.0.0.0:8082/api/v1/wallet/{yourWalletID}/history
-
+```
 ### Show Wallet Details
 
 To retrieve the details of a specific wallet, send a GET request to:
-```bash
+```cmd
 http://0.0.0.0:8082/api/v1/wallet/{yourWalletID}
 ```
