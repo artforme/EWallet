@@ -49,6 +49,7 @@ func ResErrorNotFound(msg string) Response {
 	}
 }
 
+// ValidationError returns an errors
 func ValidationError(errs validator.ValidationErrors) Response {
 	var errMsgs []string
 
@@ -56,8 +57,6 @@ func ValidationError(errs validator.ValidationErrors) Response {
 		switch err.ActualTag() {
 		case "required":
 			errMsgs = append(errMsgs, fmt.Sprintf("field %s is a required field", err.Field()))
-		case "url":
-			errMsgs = append(errMsgs, fmt.Sprintf("field %s is not a valid URL", err.Field()))
 		default:
 			errMsgs = append(errMsgs, fmt.Sprintf("field %s is not valid", err.Field()))
 		}
