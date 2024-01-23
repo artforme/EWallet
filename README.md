@@ -1,11 +1,11 @@
 
-# eWallet Application Testing Guide
+# EWallet Application Testing Guide
 
-Welcome to the testing guide for the eWallet application. This README provides instructions on how to download the Docker image for eWallet and includes a list of commands to interact with the app.
+Welcome to the testing guide for the EWallet application. This README provides instructions on how to download the Docker image for EWallet and includes a list of commands to interact with the app.
 
 ## Download the Application
 
-To get started with testing the eWallet app, you'll need to download the Docker image. Execute the following command in your terminal to pull the latest version of the eWallet Docker image:
+To get started with testing the EWallet app, you'll need to download the Docker image. Execute the following command in your terminal to pull the latest version of the EWallet Docker image:
 
 ```cmd
 docker pull artforme/ewallet:latest
@@ -13,7 +13,7 @@ docker pull artforme/ewallet:latest
 
 ## Testing Commands
 
-Below you will find a set of HTTP endpoints that you can use to test various functionalities of the eWallet application. Ensure your Docker container is running and exposing the appropriate port (default is 8082) before performing these operations.
+Below you will find a set of HTTP endpoints that you can use to test various functionalities of the EWallet application. Ensure your Docker container is running and exposing the appropriate port (default is 8082) before performing these operations.
 
 ### Create Wallet
 
