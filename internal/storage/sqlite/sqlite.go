@@ -106,9 +106,6 @@ func (s *Storage) Transfer(fromWallet, toWallet, amount string) error {
 	var resBalance string
 	err = SqlRequest.QueryRow(fromWallet).Scan(&resBalance)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return errors.New("outgoing wallet not found")
-		}
 		return fmt.Errorf("%s: execute statement: %w", op, err)
 	}
 	//formatting string to float
@@ -124,20 +121,6 @@ func (s *Storage) Transfer(fromWallet, toWallet, amount string) error {
 	if fResBalance < fAmount {
 		return fmt.Errorf("%s: execute statement: %w", op, errors.New("not enough money "+
 			"to complete transfer"))
-	}
-
-	// check if exists
-	SqlRequest, err = s.dataBase.Prepare(`
-		SELECT walletID
-		FROM wallets
-		WHERE walletID = ?
-	`)
-	err = SqlRequest.QueryRow(toWallet).Scan(&resBalance)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return errors.New("target wallet not found")
-		}
-		return fmt.Errorf("%s: execute statement: %w", op, err)
 	}
 
 	// prepare transfer
@@ -245,4 +228,31 @@ func (s *Storage) ShowWallet(walletID string) (response.Wallet, error) {
 		return response.Wallet{}, fmt.Errorf("%s: %w", op, err)
 	}
 	return resWallet, nil
+}
+
+// CheckIfExists checks if walletID exists
+func (s *Storage) CheckIfExists(walletID string) (bool, error) {
+	const op = "storage.sqlite.CheckIfExists"
+
+	SqlRequest, err := s.dataBase.Prepare(`
+		SELECT *
+		FROM wallets
+		WHERE  walletID = ?
+	`)
+	if err != nil {
+		return false, fmt.Errorf("%s: prepare statement: %w", op, err)
+	}
+
+	var resWallet string
+	var balance string
+	err = SqlRequest.QueryRow(walletID).Scan(&resWallet, &balance)
+	if err != nil {
+		return false, fmt.Errorf("%s: query statement: %w", op, err)
+	}
+
+	if resWallet == "" {
+		return false, nil
+	}
+	return true, nil
+
 }
