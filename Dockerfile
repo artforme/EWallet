@@ -1,8 +1,8 @@
 FROM golang:1.21.4
 
-WORKDIR /go/src/Ewallet
+WORKDIR /go/src/EWallet
 
-EXPOSE 8080
+EXPOSE 8082
 
 COPY . .
 

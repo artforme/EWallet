@@ -24,7 +24,7 @@ func New(storagePath string) (*Storage, error) {
 	//this constant shows the path where we're working, so we use it if we will get mistake
 	const op = "storage.sqlite.New"
 
-	//create dataBase with the driver name sqlite3
+	//open dataBase with the driver name sqlite3
 	dataBase, err := sql.Open("sqlite3", storagePath)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
