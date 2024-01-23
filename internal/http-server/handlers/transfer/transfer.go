@@ -2,6 +2,8 @@ package transfer
 
 import (
 	"EWallet/internal/lib/api/response"
+	"database/sql"
+	"errors"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
@@ -21,6 +23,7 @@ type Response struct {
 
 type WalletTransfer interface {
 	Transfer(fromWallet, toWallet, amount string) error
+	CheckIfExists(walletID string) (bool, error)
 }
 
 func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
@@ -41,6 +44,18 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 
 			return
 		}
+		if exists, err := walletTransfer.CheckIfExists(FromWalletID); !exists || err != nil {
+			log.Error("failed to find outgoing walletID", slog.Attr{
+				Key:   "error",
+				Value: slog.StringValue(err.Error()),
+			})
+			if errors.Is(err, sql.ErrNoRows) || !exists {
+				render.JSON(w, r, response.ResErrorNotFound("failed to find outgoing walletID"))
+				return
+			}
+			render.JSON(w, r, response.ResError(err.Error()))
+			return
+		}
 
 		var req Request
 
@@ -53,6 +68,18 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 
 			render.JSON(w, r, response.ResError("failed to decode request"))
 
+			return
+		}
+		if exists, err := walletTransfer.CheckIfExists(req.WalletID); !exists || err != nil {
+			log.Error("failed to find outgoing walletID", slog.Attr{
+				Key:   "error",
+				Value: slog.StringValue(err.Error()),
+			})
+			if errors.Is(err, sql.ErrNoRows) || !exists {
+				render.JSON(w, r, response.ResError("failed to find target walletID"))
+				return
+			}
+			render.JSON(w, r, response.ResError(err.Error()))
 			return
 		}
 
@@ -76,10 +103,6 @@ func New(log *slog.Logger, walletTransfer WalletTransfer) http.HandlerFunc {
 				Key:   "error",
 				Value: slog.StringValue(err.Error()),
 			})
-			if err.Error() == "outgoing wallet not found" {
-				render.JSON(w, r, response.ResErrorNotFound(err.Error()))
-				return
-			}
 			render.JSON(w, r, response.ResError(err.Error()))
 			return
 		}
