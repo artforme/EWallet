@@ -21,7 +21,7 @@ type WalletShower interface {
 	CheckIfExists(walletID string) (bool, error)
 }
 
-// New creates handler that creates new wallet and response
+// New creates a handler that shows wallet and his current balance
 func New(log *slog.Logger, walletShower WalletShower) http.HandlerFunc {
 	//our handler
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +31,7 @@ func New(log *slog.Logger, walletShower WalletShower) http.HandlerFunc {
 			slog.String("op", op),
 			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
-
+		// get walletID form url
 		walletID := chi.URLParam(r, "walletId")
 		if walletID == "" {
 			log.Info("walletID is empty")
@@ -40,7 +40,7 @@ func New(log *slog.Logger, walletShower WalletShower) http.HandlerFunc {
 
 			return
 		}
-
+		// check if exists in database
 		if exists, err := walletShower.CheckIfExists(walletID); !exists || err != nil {
 			log.Error("failed to find outgoing walletID", slog.Attr{
 				Key:   "error",
